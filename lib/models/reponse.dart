@@ -14,6 +14,13 @@ class Reponse {
   final String? nomValidateur;
   final String? prenomValidateur;
   final int nombreReactions;
+  // Détail des réactions par type
+  final int nombreLikes;
+  final int nombreHearts;
+  final int nombreStars;
+  final int nombreBulbs;
+  // Réaction de l'utilisateur actuel
+  final int? userReactionType;
 
   Reponse({
     required this.idReponse,
@@ -30,6 +37,11 @@ class Reponse {
     this.nomValidateur,
     this.prenomValidateur,
     this.nombreReactions = 0,
+    this.nombreLikes = 0,
+    this.nombreHearts = 0,
+    this.nombreStars = 0,
+    this.nombreBulbs = 0,
+    this.userReactionType,
   });
 
   factory Reponse.fromJson(Map<String, dynamic> json) {
@@ -52,6 +64,11 @@ class Reponse {
       nomValidateur: json['nom_validateur'],
       prenomValidateur: json['prenom_validateur'],
       nombreReactions: int.tryParse(json['nombre_reactions']?.toString() ?? '0') ?? 0,
+      nombreLikes: int.tryParse(json['nombre_likes']?.toString() ?? '0') ?? 0,
+      nombreHearts: int.tryParse(json['nombre_hearts']?.toString() ?? '0') ?? 0,
+      nombreStars: int.tryParse(json['nombre_stars']?.toString() ?? '0') ?? 0,
+      nombreBulbs: int.tryParse(json['nombre_bulbs']?.toString() ?? '0') ?? 0,
+      userReactionType: json['user_reaction_type'],
     );
   }
 

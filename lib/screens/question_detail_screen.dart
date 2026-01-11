@@ -499,34 +499,43 @@ class _ReponseCardState extends State<_ReponseCard> {
             Row(
               children: [
                 _ReactionButton(
-                  emoji: '👍',
+                  icon: Icons.thumb_up_rounded,
                   label: 'J\'aime',
+                  color: Colors.blue,
+                  count: widget.reponse.nombreLikes,
+                  isActive: widget.reponse.userReactionType == 1,
                   onTap: () => _react(1),
                 ),
                 const SizedBox(width: 8),
                 _ReactionButton(
-                  emoji: '❤️',
+                  icon: Icons.favorite_rounded,
                   label: 'Adore',
+                  color: Colors.red,
+                  count: widget.reponse.nombreHearts,
+                  isActive: widget.reponse.userReactionType == 2,
                   onTap: () => _react(2),
                 ),
                 const SizedBox(width: 8),
                 _ReactionButton(
-                  emoji: '✨',
+                  icon: Icons.star_rounded,
                   label: 'Utile',
+                  color: Colors.amber,
+                  count: widget.reponse.nombreStars,
+                  isActive: widget.reponse.userReactionType == 3,
                   onTap: () => _react(3),
                 ),
                 const SizedBox(width: 8),
                 _ReactionButton(
-                  emoji: '💡',
+                  icon: Icons.lightbulb_rounded,
                   label: 'Pertinent',
+                  color: Colors.orange,
+                  count: widget.reponse.nombreBulbs,
+                  isActive: widget.reponse.userReactionType == 4,
                   onTap: () => _react(4),
                 ),
                 const Spacer(),
                 if (widget.reponse.nombreReactions > 0)
-                  Text(
-                    '${widget.reponse.nombreReactions} réaction(s)',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
+                  _ReactionSummary(reponse: widget.reponse),
               ],
             ),
             const SizedBox(height: 8),
@@ -566,30 +575,273 @@ class _ReponseCardState extends State<_ReponseCard> {
   }
 }
 
-class _ReactionButton extends StatelessWidget {
-  final String emoji;
-  final String label;
-  final VoidCallback onTap;
+// Widget pour afficher le résumé des réactions avec détail au clic
+class _ReactionSummary extends StatelessWidget {
+  final Reponse reponse;
 
-  const _ReactionButton({
-    required this.emoji,
-    required this.label,
-    required this.onTap,
-  });
+  const _ReactionSummary({required this.reponse});
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+    return GestureDetector(
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          builder: (context) => Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Détail des réactions',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                _ReactionDetailRow(
+                  icon: Icons.thumb_up_rounded,
+                  label: 'J\'aime',
+                  count: reponse.nombreLikes,
+                  color: Colors.blue,
+                ),
+                _ReactionDetailRow(
+                  icon: Icons.favorite_rounded,
+                  label: 'Adore',
+                  count: reponse.nombreHearts,
+                  color: Colors.red,
+                ),
+                _ReactionDetailRow(
+                  icon: Icons.star_rounded,
+                  label: 'Utile',
+                  count: reponse.nombreStars,
+                  color: Colors.amber,
+                ),
+                _ReactionDetailRow(
+                  icon: Icons.lightbulb_rounded,
+                  label: 'Pertinent',
+                  count: reponse.nombreBulbs,
+                  color: Colors.orange,
+                ),
+                const SizedBox(height: 8),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Total',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      Text(
+                        '${reponse.nombreReactions}',
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
           color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Colors.grey[300]!),
         ),
-        child: Text(emoji, style: const TextStyle(fontSize: 16)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Afficher les icônes des réactions présentes
+            if (reponse.nombreLikes > 0)
+              Icon(Icons.thumb_up_rounded, size: 14, color: Colors.blue),
+            if (reponse.nombreHearts > 0)
+              Padding(
+                padding: EdgeInsets.only(left: reponse.nombreLikes > 0 ? 2 : 0),
+                child: Icon(Icons.favorite_rounded, size: 14, color: Colors.red),
+              ),
+            if (reponse.nombreStars > 0)
+              Padding(
+                padding: EdgeInsets.only(left: (reponse.nombreLikes > 0 || reponse.nombreHearts > 0) ? 2 : 0),
+                child: Icon(Icons.star_rounded, size: 14, color: Colors.amber),
+              ),
+            if (reponse.nombreBulbs > 0)
+              Padding(
+                padding: EdgeInsets.only(left: (reponse.nombreLikes > 0 || reponse.nombreHearts > 0 || reponse.nombreStars > 0) ? 2 : 0),
+                child: Icon(Icons.lightbulb_rounded, size: 14, color: Colors.orange),
+              ),
+            const SizedBox(width: 6),
+            Text(
+              '${reponse.nombreReactions}',
+              style: TextStyle(fontSize: 13, color: Colors.grey[700], fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ReactionDetailRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final int count;
+  final Color color;
+
+  const _ReactionDetailRow({
+    required this.icon,
+    required this.label,
+    required this.count,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(child: Text(label, style: const TextStyle(fontSize: 15))),
+          Text(
+            '$count',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: count > 0 ? color : Colors.grey,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReactionButton extends StatefulWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final int count;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _ReactionButton({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.count,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  @override
+  State<_ReactionButton> createState() => _ReactionButtonState();
+}
+
+class _ReactionButtonState extends State<_ReactionButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+    _scaleAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.4), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 1.4, end: 0.9), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 0.9, end: 1.0), weight: 40),
+    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleTap() {
+    _controller.forward(from: 0);
+    widget.onTap();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isActive = widget.isActive;
+    final hasReactions = widget.count > 0;
+
+    return GestureDetector(
+      onTap: _handleTap,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _scaleAnimation.value,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: isActive
+                    ? widget.color.withOpacity(0.15)
+                    : Colors.grey[100],
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isActive
+                      ? widget.color.withOpacity(0.5)
+                      : Colors.grey[300]!,
+                  width: isActive ? 2 : 1.5,
+                ),
+                boxShadow: isActive ? [
+                  BoxShadow(
+                    color: widget.color.withOpacity(0.25),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+                ] : null,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    widget.icon,
+                    size: 18,
+                    color: isActive || hasReactions
+                        ? widget.color
+                        : Colors.grey[500],
+                  ),
+                  if (widget.count > 0) ...[
+                    const SizedBox(width: 4),
+                    Text(
+                      '${widget.count}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: widget.color,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
