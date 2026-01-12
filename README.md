@@ -176,19 +176,6 @@ flutter build web
 
 ---
 
-## Stack Technique
-
-```
-Frontend:     Flutter 3.5+ (Dart)
-State:        Provider
-Backend:      PHP 7.4+ (REST API)
-Auth:         JWT (JSON Web Tokens)
-Database:     MySQL 8.0
-Animations:   Flutter AnimationController
-```
-
----
-
 ## Fonctionnement des Reactions
 
 Les reactions utilisent des animations personnalisees :
@@ -216,24 +203,6 @@ Les reactions utilisent des animations personnalisees :
 | Valider une reponse | Non | Oui |
 | Creer une matiere | Non | Oui |
 | Supprimer sa question | Oui | Oui |
-
----
-
-## Contribuer
-
-```bash
-# Fork le projet
-git clone https://github.com/votre-username/forum_app.git
-
-# Creer une branche
-git checkout -b feature/ma-fonctionnalite
-
-# Commit
-git commit -m "feat: ajout de ma fonctionnalite"
-
-# Push
-git push origin feature/ma-fonctionnalite
-```
 
 ---
 
